@@ -4,7 +4,7 @@ UPAR="--build-arg UID=`id -u` --build-arg GID=`id -g`"
 
 IMAGENAME=ros_noetic_gazebo
 
-DOCKERFILE=Dockerfile
+DOCKERFILE=Dockerfile.gazebo11
 
 echo "====================================="
 echo "   Building $IMAGENAME  "
