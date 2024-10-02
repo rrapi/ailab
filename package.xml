@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ailab</name>
+  <version>0.0.0</version>
+  <description>
+    Gazebo simulation for AI-LAB arms
+  </description>
+
+  <maintainer email="rrapi.franci@gmail.com">Franci Rrapi</maintainer>
+  <author email="rrapi.franci@gmail.com">Franci Rrapi</author>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+  </export>
+
+</package>
