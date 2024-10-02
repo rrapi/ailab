@@ -105,13 +105,13 @@ RUN mkdir -p $HOME/src/ros
 
 # === grasp fix ===
 
-RUN cd $HOME/src/ros && \
-    git clone https://github.com/JenniferBuehler/general-message-pkgs.git && \
-    git clone https://github.com/JenniferBuehler/gazebo-pkgs.git 
+# RUN cd $HOME/src/ros && \
+#     git clone https://github.com/JenniferBuehler/general-message-pkgs.git && \
+#     git clone https://github.com/JenniferBuehler/gazebo-pkgs.git 
 
-RUN cd $HOME/ros/catkin_ws/src && \
-    ln -s $HOME/src/ros/general-message-pkgs . && \
-    ln -s $HOME/src/ros/gazebo-pkgs . 
+# RUN cd $HOME/ros/catkin_ws/src && \
+#     ln -s $HOME/src/ros/general-message-pkgs . && \
+#     ln -s $HOME/src/ros/gazebo-pkgs . 
 
 
 
