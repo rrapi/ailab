@@ -66,6 +66,7 @@ RUN /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make"
 # === franka libraries and ROS packages ===
 
 # From ubuntu repo
+USER root
 RUN apt-get install -y ros-noetic-libfranka ros-noetic-franka-ros
 
 # From git repo
