@@ -21,7 +21,8 @@ RUN apt-get update && \
         ros-noetic-moveit ros-noetic-tf-conversions \
         ros-noetic-robot-state-publisher \
         ros-noetic-joint-trajectory-controller ros-noetic-joint-state-controller \
-        ros-noetic-gripper-action-controller ros-noetic-position-controllers
+        ros-noetic-gripper-action-controller ros-noetic-position-controllers \
+        ros-noetic-libfranka ros-noetic-franka-ros
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
@@ -66,8 +67,8 @@ RUN /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make"
 # === franka libraries and ROS packages ===
 
 # From ubuntu repo
-USER root
-RUN apt-get install -y ros-noetic-libfranka ros-noetic-franka-ros
+# USER root
+# RUN apt-get install -y ros-noetic-libfranka ros-noetic-franka-ros
 
 # From git repo
 
