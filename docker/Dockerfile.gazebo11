@@ -140,7 +140,7 @@ RUN cd /home/robot/ros/catkin_ws && \
 USER root
 
 RUN cd /home/robot/ros/catkin_ws && \
-    apt update && \
+    apt-get update && \
     rosdep install --from-paths src --ignore-src --rosdistro=noetic -y -r
 
 USER robot
