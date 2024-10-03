@@ -36,10 +36,10 @@
 
   <!-- Export env variable so that gazebo finds our models -->
   <env name="GAZEBO_MODEL_PATH"
-    value="$(find arm_gazebo)/models:$(optenv GAZEBO_MODEL_PATH)" />
+    value="$(find ailab)/models:$(optenv GAZEBO_MODEL_PATH)" />
 
   <!-- env name="GAZEBO_MODEL_PATH"
-    value="$(find arm_gazebo)/models:$(optenv GAZEBO_MODEL_PATH)" / -->
+    value="$(find ailab)/models:$(optenv GAZEBO_MODEL_PATH)" / -->
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch" if="$(arg gazebo)">
     <arg name="world_name" value="$(arg world)"/>
@@ -49,10 +49,10 @@
     <arg name="use_sim_time" value="true"/>
   </include>
 
-<!--         command="xacro $(find arm_gazebo)/launch/panda_camera.urdf.xacro  -->
+<!--         command="xacro $(find ailab)/launch/panda_camera.urdf.xacro  -->
 
   <param name="robot_description"
-         command="xacro $(find arm_gazebo)/launch/urdf/panda_camera.urdf.xacro
+         command="xacro $(find ailab)/launch/urdf/panda_camera.urdf.xacro
                   gazebo:=true
                   hand:=$(arg use_gripper)
                   arm_id:=$(arg arm_id)

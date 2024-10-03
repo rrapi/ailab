@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur5e_2f85">
 
-  <xacro:include filename="$(find arm_gazebo)/launch/urdf/ur5e_2f85_macro.xacro"/>
+  <xacro:include filename="$(find ailab)/launch/urdf/ur5e_2f85_macro.xacro"/>
   <xacro:ur5e_2f85 prefix="" />
 
   <link name="world" />

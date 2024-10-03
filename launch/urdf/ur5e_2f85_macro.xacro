@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro"  name="ur5e">
   
   <!-- xacro:include filename="$(find ur_description)/urdf/inc/ur5e_macro.xacro"/ -->
-  <xacro:include filename="$(find arm_gazebo)/launch/urdf/ur5e_macro.xacro"/>
+  <xacro:include filename="$(find ailab)/launch/urdf/ur5e_macro.xacro"/>
   <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper.urdf.xacro"/>
 
   <!-- create the robot + eef combo itself as a macro -->
