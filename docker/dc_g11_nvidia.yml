@@ -25,6 +25,6 @@ services:
     working_dir: /home/robot/
     entrypoint:
     - bash
-    - -ci 
+    - -ci
     - "cd /home/robot/src/ailab/bin && ./init_sim.bash"
 
