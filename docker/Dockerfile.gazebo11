@@ -132,7 +132,7 @@ RUN cd $HOME/ros/catkin_ws/src && \
     ln -s $HOME/src/ros/universal_robot . && \
     ln -s $HOME/src/ros/robotiq . && \
     ln -s $HOME/src/ros/onrobot . && \
-    ln -s $HOME/src/ros/roboticsgroup_upatras_gazebo_plugins . && \
+    ln -s $HOME/src/ros/roboticsgroup_upatras_gazebo_plugins .
 
 
 
