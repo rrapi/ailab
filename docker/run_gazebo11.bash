@@ -10,5 +10,5 @@ elif [ "$1" == "vnc" ]; then
   DC=dc_g11_vnc.yml
 fi
 
-docker-compose -f $DC  up
+docker-compose -f $DC up
 
