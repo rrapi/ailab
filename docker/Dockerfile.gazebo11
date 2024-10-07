@@ -147,8 +147,11 @@ USER root
 
 RUN cd /home/robot/ros/catkin_ws && \
     apt-get update && \
-    rosdep install --from-paths src --ignore-src --rosdistro=noetic -y -r && \
-    apt-get install ros-noetic-ros-control ros-noetic-ros-controllers
+    rosdep install --from-paths src --ignore-src --rosdistro=noetic -y -r 
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ros-noetic-ros-control ros-noetic-ros-controllers
 
 USER robot
 
