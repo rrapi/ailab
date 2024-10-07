@@ -17,7 +17,7 @@ services:
     container_name: simulator
     tty: true
     ipc: host
-    network_mode: "host"
+    network_mode: host
     privileged: true
     security_opt:
       - seccomp:unconfined

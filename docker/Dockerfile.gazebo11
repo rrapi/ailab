@@ -92,15 +92,15 @@ USER robot
 
 RUN mkdir -p $HOME/src/ros
 
-# franka_ros
+# franka_ros and panda_moveit_config
 
-# RUN cd $HOME/src/ros && \
+RUN cd $HOME/src/ros && \
 #     git clone --recursive https://github.com/frankaemika/franka_ros franka_ros && \
-#     git clone https://github.com/ros-planning/panda_moveit_config.git panda_moveit_config
+     git clone -b noetic-devel https://github.com/ros-planning/panda_moveit_config.git panda_moveit_config
 #  
-# RUN cd $HOME/ros/catkin_ws/src && \
+ RUN cd $HOME/ros/catkin_ws/src && \
 #     ln -s $HOME/src/ros/franka_ros . && \
-#     ln -s $HOME/src/ros/panda_moveit_config . 
+     ln -s $HOME/src/ros/panda_moveit_config . 
 
 
 # === grasp fix ===
@@ -115,11 +115,14 @@ RUN mkdir -p $HOME/src/ros
 
 
 
-# === Universal robots arm and robotiq gripper ===
+# === Universal robots arm, robotiq gripper and onrobot gripper ===
 
 RUN cd ~/src/ros/ && \
     git clone -b noetic-devel https://github.com/ros-industrial/universal_robot.git && \
-    git clone https://github.com/filesmuggler/robotiq.git
+    git clone https://github.com/filesmuggler/robotiq.git && \
+    git clone https://github.com/takuya-ki/onrobot.git --depth 1 && \
+    git clone https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins.git --depth 1
+
 
 # Patch robotiq_85_gripper.transmission.xacro
 COPY patches/robotiq_85_gripper.transmission.xacro /tmp
@@ -127,7 +130,9 @@ RUN cp /tmp/robotiq_85_gripper.transmission.xacro $HOME/src/ros/robotiq/robotiq_
 
 RUN cd $HOME/ros/catkin_ws/src && \
     ln -s $HOME/src/ros/universal_robot . && \
-    ln -s $HOME/src/ros/robotiq . 
+    ln -s $HOME/src/ros/robotiq . && \
+    ln -s $HOME/src/ros/onrobot . && \
+    ln -s $HOME/src/ros/roboticsgroup_upatras_gazebo_plugins . && \
 
 
 
@@ -142,7 +147,8 @@ USER root
 
 RUN cd /home/robot/ros/catkin_ws && \
     apt-get update && \
-    rosdep install --from-paths src --ignore-src --rosdistro=noetic -y -r
+    rosdep install --from-paths src --ignore-src --rosdistro=noetic -y -r && \
+    apt-get install ros-noetic-ros-control ros-noetic-ros-controllers
 
 USER robot
 
