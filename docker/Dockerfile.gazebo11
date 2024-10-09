@@ -14,16 +14,17 @@ RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        # libeigen3-dev ----------------------
-        build-essential cmake git libpoco-dev \ 
+        build-essential cmake git libpoco-dev libeigen3-dev \
+        liburdfdom-headers-dev libconsole-bridge-dev libtinyxml2-dev \
         apt-utils tmux less sudo nano xterm \
         mesa-utils libgl1-mesa-glx \
         ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control \
         ros-noetic-moveit ros-noetic-tf-conversions \
-        ros-noetic-robot-state-publisher \
+        ros-noetic-robot-state-publisher ros-noetic-rqt-joint-trajectory-controller \
         ros-noetic-joint-trajectory-controller ros-noetic-joint-state-controller \
         ros-noetic-gripper-action-controller ros-noetic-position-controllers \
-        ros-noetic-libfranka ros-noetic-franka-ros \
+        # ros-noetic-libfranka ros-noetic-franka-ros \
+        ros-noetic-ros-control ros-noetic-ros-controllers \
         ros-noetic-gazebo-ros ros-noetic-eigen-conversions ros-noetic-object-recognition-msgs
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -35,6 +36,20 @@ RUN useradd -ms /bin/bash robot && echo "robot:robot" | chpasswd && adduser robo
 
 RUN usermod -u $UID robot && groupmod -g $GID robot
 
+
+# Installing dependencies and pinocchio pkg for libfranka 
+RUN apt-get install -qqy lsb-release curl 
+
+USER robot
+RUN mkdir -p /etc/apt/keyrings
+RUN curl http://robotpkg.openrobots.org/packages/debian/robotpkg.asc \
+    | tee /etc/apt/keyrings/robotpkg.asc
+RUN echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg.asc] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -cs) robotpkg" \
+    | tee /etc/apt/sources.list.d/robotpkg.list
+
+USER root
+RUN apt-get update && \
+    apt-get install -qqy robotpkg-pinocchio
 
 
 ###### USER robot ######
@@ -69,26 +84,25 @@ RUN /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make"
 # === franka libraries and ROS packages ===
 
 # From ubuntu repo
-# USER root
-# RUN apt-get install -y ros-noetic-libfranka ros-noetic-franka-ros
+# RUN apt install -y ros-noetic-libfranka ros-noetic-franka-ros
 
 # From git repo
 
 # libfranka
-# RUN mkdir -p ~/lib/libfrankainstall/ && \
-#     cd ~/lib/libfrankainstall/ && \
-#     git clone --recursive https://github.com/frankaemika/libfranka && \
-#     cd libfranka && \
-#     git submodule update && \ 
-#     mkdir build && \
-#     cd build && \
-#     cmake -DCMAKE_BUILD_TYPE=Release .. && \ 
-#     cmake --build . 
+RUN mkdir -p ~/lib/libfrankainstall/ && \
+    cd ~/lib/libfrankainstall/ && \
+    git clone --recursive https://github.com/frankaemika/libfranka && \
+    cd libfranka && \
+    git submodule update && \ 
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \ 
+    cmake --build . 
 
-# USER root
+USER root
 
-# RUN cd /home/robot/lib/libfrankainstall/libfranka/build && \
-#     make install 
+RUN cd /home/robot/lib/libfrankainstall/libfranka/build && \
+    make install 
 
 USER robot
 
@@ -97,12 +111,12 @@ RUN mkdir -p $HOME/src/ros
 # franka_ros and panda_moveit_config
 
 RUN cd $HOME/src/ros && \
-#     git clone --recursive https://github.com/frankaemika/franka_ros franka_ros && \
-     git clone -b noetic-devel https://github.com/ros-planning/panda_moveit_config.git panda_moveit_config
-#  
+    git clone --recursive https://github.com/frankaemika/franka_ros franka_ros && \
+    git clone -b noetic-devel https://github.com/ros-planning/panda_moveit_config.git panda_moveit_config
+
  RUN cd $HOME/ros/catkin_ws/src && \
-#     ln -s $HOME/src/ros/franka_ros . && \
-     ln -s $HOME/src/ros/panda_moveit_config . 
+    ln -s $HOME/src/ros/franka_ros . && \
+    ln -s $HOME/src/ros/panda_moveit_config . 
 
 
 # === grasp fix ===
@@ -116,8 +130,25 @@ RUN cd $HOME/ros/catkin_ws/src && \
     ln -s $HOME/src/ros/gazebo-pkgs . 
 
 
+# === Universal Robot ROS Driver ===
 
-# === Universal robots arm, robotiq gripper and onrobot gripper ===
+RUN cd $HOME/src/ros && \
+    git clone https://github.com/UniversalRobots/Universal_Robots_ROS_Driver.git Universal_Robots_ROS_Driver 
+
+RUN cd $HOME/ros/catkin_ws/src && \
+    ln -s $HOME/src/ros/Universal_Robots_ROS_Driver . 
+
+
+# Install vcstool
+USER root
+RUN apt-get update -qq && apt-get install python3-vcstool
+
+# clone the direct dependencies
+USER robot
+RUN cd $HOME/ros/catkin_ws && vcs import --input src/Universal_Robots_ROS_Driver/.noetic.rosinstall src
+
+
+# === Universal Robots arm, Robotiq gripper and Onrobot gripper ===
 
 RUN cd ~/src/ros/ && \
     git clone -b noetic-devel https://github.com/ros-industrial/universal_robot.git && \
@@ -141,22 +172,15 @@ RUN cd $HOME/ros/catkin_ws/src && \
 # === ros install and make ===
 
 USER robot
-
 RUN cd /home/robot/ros/catkin_ws && \
     rosdep update
 
 USER root
-
 RUN cd /home/robot/ros/catkin_ws && \
     apt-get update && \
-    rosdep install --from-paths src --ignore-src --rosdistro=noetic -y -r 
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ros-noetic-ros-control ros-noetic-ros-controllers
+    rosdep install --from-paths src --ignore-src --rosdistro=noetic -y -r
 
 USER robot
-
 RUN /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make"
 
 
