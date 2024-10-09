@@ -33,6 +33,6 @@ services:
     entrypoint:
     - bash
     - -ci 
-    - "cd /home/robot/src/ailab/bin && ./init_sim.bash panda"
+    - "cd /home/robot/src/ailab/bin && ./init_sim.bash ur5e"
 
 

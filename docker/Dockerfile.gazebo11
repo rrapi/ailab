@@ -40,16 +40,13 @@ RUN usermod -u $UID robot && groupmod -g $GID robot
 # Installing dependencies and pinocchio pkg for libfranka 
 RUN apt-get install -qqy lsb-release curl 
 
-USER robot
 RUN mkdir -p /etc/apt/keyrings
 RUN curl http://robotpkg.openrobots.org/packages/debian/robotpkg.asc \
     | tee /etc/apt/keyrings/robotpkg.asc
 RUN echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg.asc] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -cs) robotpkg" \
     | tee /etc/apt/sources.list.d/robotpkg.list
-
-USER root
 RUN apt-get update && \
-    apt-get install -qqy robotpkg-pinocchio
+    apt-get install -qqy robotpkg-py3*-pinocchio
 
 
 ###### USER robot ######
@@ -68,6 +65,13 @@ RUN mkdir -p $HOME/ros/catkin_ws/src
 
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && cd $HOME/ros/catkin_ws/src && catkin_init_workspace && cd .. && catkin_make"
 
+# Set Environment variables
+
+ENV PATH="/opt/openrobots/bin:$PATH"
+ENV PKG_CONFIG_PATH="/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH"
+ENV LD_LIBRARY_PATH="/opt/openrobots/lib:$LD_LIBRARY_PATH"
+ENV PYTHONPATH="/opt/openrobots/lib/python3.10/site-packages:$PYTHONPATH"
+ENV CMAKE_PREFIX_PATH="/opt/openrobots:$CMAKE_PREFIX_PATH"
 
 # Set up .bashrc
 
@@ -96,7 +100,7 @@ RUN mkdir -p ~/lib/libfrankainstall/ && \
     git submodule update && \ 
     mkdir build && \
     cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \ 
+    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF .. && \ 
     cmake --build . 
 
 USER root
@@ -140,18 +144,19 @@ RUN cd $HOME/ros/catkin_ws/src && \
 
 
 # Install vcstool
-USER root
-RUN apt-get update -qq && apt-get install python3-vcstool
+#USER root
+#RUN apt-get update -qq && apt-get install python3-vcstool
 
 # clone the direct dependencies
-USER robot
-RUN cd $HOME/ros/catkin_ws && vcs import --input src/Universal_Robots_ROS_Driver/.noetic.rosinstall src
+#USER robot
+#RUN cd $HOME/ros/catkin_ws && vcs import --input src/Universal_Robots_ROS_Driver/.noetic.rosinstall src
 
 
 # === Universal Robots arm, Robotiq gripper and Onrobot gripper ===
 
 RUN cd ~/src/ros/ && \
     git clone -b noetic-devel https://github.com/ros-industrial/universal_robot.git && \
+    git clone -b noetic-devel https://github.com/ros-industrial/ur_msgs.git && \
     git clone https://github.com/filesmuggler/robotiq.git && \
     git clone https://github.com/takuya-ki/onrobot.git --depth 1 && \
     git clone https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins.git --depth 1
@@ -161,8 +166,9 @@ RUN cd ~/src/ros/ && \
 COPY patches/robotiq_85_gripper.transmission.xacro /tmp
 RUN cp /tmp/robotiq_85_gripper.transmission.xacro $HOME/src/ros/robotiq/robotiq_description/urdf/
 
-RUN cd $HOME/ros/catkin_ws/src && \
+RUN cd $HOME/ros/catkin_ws/src && ls && \
     ln -s $HOME/src/ros/universal_robot . && \
+    ln -s $HOME/src/ros/ur_msgs . && \
     ln -s $HOME/src/ros/robotiq . && \
     ln -s $HOME/src/ros/onrobot . && \
     ln -s $HOME/src/ros/roboticsgroup_upatras_gazebo_plugins .

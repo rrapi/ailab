@@ -1,4 +1,4 @@
-init_sim_"$1".bash
+./init_sim_"$1".bash
 
 # if [ "$1" == "panda" ]; then
 #   SIM=init_sim_panda.bash

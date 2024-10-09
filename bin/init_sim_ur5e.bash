@@ -10,7 +10,7 @@ tmux send-keys -t $SESSION:0 "roslaunch ailab arm_ur5.launch world:=`rospack fin
 sleep 15
 
 tmux new-window -t $SESSION:1 -n 'moveit'
-# tmux send-keys -t $SESSION:1 "roslaunch panda_moveit_config demo.launch load_robot_description:=false  moveit_controller_manager:=simple use_rviz:=false"  C-m
+tmux send-keys -t $SESSION:1 "roslaunch ur5e_moveit_config demo.launch load_robot_description:=false  moveit_controller_manager:=simple use_rviz:=false"  C-m
 
 # sleep 5
 
