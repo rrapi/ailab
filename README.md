@@ -161,6 +161,8 @@ You can detach from tmux with `CTRL-b d`
 
 
 # Simulation Images
+Simulation of robot UR5e with Robotiq 2f_80 gripper and camera attached
+
 ![alt text](./images/gazebo_simulation_env.png?raw=true)
 ![alt text](./images/rviz_simulation_env_camera_view.png?raw=true)
 
