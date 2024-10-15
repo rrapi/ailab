@@ -1,7 +1,8 @@
-./init_sim_"$1".bash
-
-# if [ "$1" == "panda" ]; then
-#   SIM=init_sim_panda.bash
+if [ "$1" != "" ]; then
+  ./init_sim_"$1".bash
+else
+  bash
+fi
 # elif [ "$1" == "ur5e" ]; then
 #   SIM=init_sim_ur5e.bash
 # fi

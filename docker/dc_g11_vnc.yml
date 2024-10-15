@@ -29,6 +29,8 @@ services:
       - xserver
     volumes:
       - ${AILAB_DIR}:/home/robot/src/ailab
+    devices:
+      - /dev/snd:/dev/snd
     working_dir: /home/robot/
     entrypoint:
     - bash
