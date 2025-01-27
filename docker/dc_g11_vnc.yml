@@ -13,7 +13,7 @@ services:
       - "3000:80"
 
   gazebo:
-    image: ros_noetic_gazebo
+    image: francirrapi/ros_noetic_gazebo:0.3
     container_name: simulator
     tty: true
     ipc: host
@@ -34,7 +34,7 @@ services:
     working_dir: /home/robot/
     entrypoint:
     - bash
-    - -ci 
-    - "cd /home/robot/src/ailab/bin && ./init_sim.bash ur5e"
+    #- -ci 
+    #- "cd /home/robot/src/ailab/bin && ./init_sim.bash ur5e"
 
 
