@@ -1,9 +1,20 @@
 version: "2.3"
 services:
 
+  xserver:
+    image: devrt/xserver
+    container_name: xserver
+    ipc: host
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - DISPLAY=:9
+    ports:
+      - "3000:80"
+
   gazebo:
-    image: ros_noetic_gazebo
-    container_name: simulator
+    image: francirrapi/ros_noetic_gazebo:0.3
+    container_name: simulator_nvidia
     runtime: nvidia
     tty: true
     ipc: host
@@ -21,7 +32,11 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - $HOME/.Xauthority:/home/robot/.Xauthority
       - ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native
-      - ${AILAB_DIR}:/home/robot/src/ailab
+      #- ${AILAB_DIR}:/home/robot/src/ailab
+      - ..:/home/robot/src/ailab
+      - $HOME/Projects/AI4HRC/src/D-RMGPT:/home/robot/src/D-RMGPT
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
     working_dir: /home/robot/
     entrypoint:
     - bash

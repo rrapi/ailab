@@ -28,9 +28,15 @@ services:
     depends_on:
       - xserver
     volumes:
-      - ${AILAB_DIR}:/home/robot/src/ailab
+      - ..:/home/robot/src/ailab
+      - /home/lab/Projects/AI4HRC/src/D-RMGPT:/home/robot/src/D-RMGPT
     devices:
       - /dev/snd:/dev/snd
+      #- /dev/bus/usb/002/016:/dev/bus/usb/002/016
+      #- /dev/bus/usb/002/018:/dev/bus/usb/002/018
+      - /dev/bus/usb:/dev/bus/usb
+      #- /dev/video0:/dev/video0
+      #- /dev/video6:/dev/video6
     working_dir: /home/robot/
     entrypoint:
     - bash
