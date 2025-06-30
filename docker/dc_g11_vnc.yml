@@ -30,6 +30,7 @@ services:
     volumes:
       - ..:/home/robot/src/ailab
       - /home/lab/Projects/AI4HRC/src/D-RMGPT:/home/robot/src/D-RMGPT
+      - /home/lab/Projects/AI4HRC/src/CoRoGPT:/home/robot/src/CoRoGPT
     devices:
       - /dev/snd:/dev/snd
       #- /dev/bus/usb/002/016:/dev/bus/usb/002/016
@@ -38,8 +39,10 @@ services:
       #- /dev/video0:/dev/video0
       #- /dev/video6:/dev/video6
     working_dir: /home/robot/
+    # command: ["/bin/bash", "/usr/local/bin/startup.sh"]
     entrypoint:
-    - bash
+      - bash
+    # - ./home/robot/src/ailab/docker/dev_setup.bash
     #- -ci 
     #- "cd /home/robot/src/ailab/bin && ./init_sim.bash ur5e"
 
