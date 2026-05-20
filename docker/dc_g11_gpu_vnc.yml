@@ -1,5 +1,3 @@
-
-version: "2.3"
 services:
 
   xserver:
@@ -13,33 +11,38 @@ services:
     ports:
       - "3000:80"
 
-  gazebo:
-    image: francirrapi/ros_noetic_gazebo:0.3
-    container_name: simulator_nvidia
-    runtime: nvidia
+  robot:
+    image: robot_backup
+    container_name: robot
     tty: true
     ipc: host
-    network_mode: "host"
+    network_mode: host
     privileged: true
     security_opt:
       - seccomp:unconfined
     environment:
-      - PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native
-      - DISPLAY=$DISPLAY
+      - DISPLAY=:9 # Kept at :9 to pipe into the browser xserver container
       - QT_X11_NO_MITSHM=1
+      - PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
+    volumes_from:
+      - xserver
+    depends_on:
+      - xserver
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - $HOME/.Xauthority:/home/robot/.Xauthority
+      - /home/lab/Projects/AI4HRC/src/CoRoGPT:/home/robot/src/CoRoGPT
       - ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native
-      #- ${AILAB_DIR}:/home/robot/src/ailab
-      - ..:/home/robot/src/ailab
-      - $HOME/Projects/AI4HRC/src/D-RMGPT:/home/robot/src/D-RMGPT
     devices:
+      - /dev/snd:/dev/snd
       - /dev/bus/usb:/dev/bus/usb
     working_dir: /home/robot/
     entrypoint:
-    - bash
-    - -ci
-    - "cd /home/robot/src/ailab/bin && ./init_sim.bash"
+      - bash
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
