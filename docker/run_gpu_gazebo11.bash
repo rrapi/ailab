@@ -4,12 +4,12 @@
 
 export AILAB_DIR=`pwd | gawk '{ print gensub(/\/docker/, "", 1) }'`
 
-DC=dc_g11_nvidia_vnc.yml
+DC=dc_g11_gpu_vnc.yml
 
 if [ "$1" == "x11" ]; then
-  DC=dc_g11_nvidia_x11.yml
+  DC=dc_g11_gpu_x11.yml
 elif [ "$1" == "vnc" ]; then
-  DC=dc_g11_nvidia_vnc.yml
+  DC=dc_g11_gpu_vnc.yml
 fi
 
 docker compose -f $DC up
