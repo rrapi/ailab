@@ -1,0 +1,71 @@
+# Start from the official, pre-configured ROS 2 Jazzy base image on Ubuntu 24.04
+FROM ros:jazzy-ros-base-noble
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG UID=1000
+ARG GID=1000
+
+###### USER root ######
+
+# 1. Install system utilities and native Python 3.12 tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    curl \
+    sudo \
+    tmux \
+    nano \
+    libgl1 \
+    libglib2.0-0 \
+    libusb-1.0-0 \
+    python3.12-dev \
+    python3-pip \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Inject NVIDIA CUDA 12.6 toolkit runtime onto this ROS base
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb && \
+    dpkg -i cuda-keyring_1.1-1_all.deb && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        cuda-toolkit-12-6 \
+        libcudnn9-cuda-12 \
+    && rm cuda-keyring_1.1-1_all.deb
+
+# Set up the non-root 'robot' user by modifying the pre-existing UID 1000 user
+RUN usermod -l robot ubuntu && \
+    usermod -d /home/robot -m robot && \
+    groupmod -n robot ubuntu && \
+    echo "robot:robot" | chpasswd && \
+    adduser robot sudo
+
+# Ensure the newly renamed home folder permissions are perfectly aligned
+RUN chown -R robot:robot /home/robot
+
+###### USER robot ######
+USER robot
+WORKDIR /home/robot
+
+# 3. Install PyTorch with CUDA support 
+RUN pip install --no-cache-dir --break-system-packages torch torchvision --index-url https://download.pytorch.org/whl/cu124
+
+# 4. Install SAM 3 (Ultralytics) and Perception drivers    
+RUN pip install --no-cache-dir --break-system-packages \
+    ultralytics \
+    timm \
+    git+https://github.com/ultralytics/CLIP.git \
+    pyrealsense2 \
+    opencv-python \
+    numpy \
+    scipy \
+    open3d
+
+# 6. Set up ROS 2 Environment Sourcing
+RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
+RUN mkdir -p ~/ros2_ws/src
+
+ENV PATH="/home/robot/.local/bin:$PATH"
+
+CMD ["/usr/bin/tmux"]
