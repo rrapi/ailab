@@ -2,7 +2,7 @@ version: "2.3"
 services:
 
   gazebo:
-    image: ros_noetic_gazebo
+    image: francirrapi/ros_noetic_gazebo:0.3
     container_name: simulator
     tty: true
     ipc: host
@@ -18,7 +18,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - $HOME/.Xauthority:/home/robot/.Xauthority
       - ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native
-      - ${AILAB_DIR}:/home/robot/src/ailab
+      - /home/lab/Projects/AI4HRC/src/MaCoRoGPT:/home/robot/src/MaCoRoGPT
     working_dir: /home/robot/
     entrypoint:
     - bash

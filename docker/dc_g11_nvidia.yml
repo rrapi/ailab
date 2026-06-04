@@ -15,7 +15,7 @@ services:
 
   gazebo:
     image: francirrapi/ros_noetic_gazebo:0.3
-    container_name: simulator_nvidia
+    container_name: simulator
     runtime: nvidia
     tty: true
     ipc: host
@@ -34,8 +34,7 @@ services:
       - $HOME/.Xauthority:/home/robot/.Xauthority
       - ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native
       #- ${AILAB_DIR}:/home/robot/src/ailab
-      - ..:/home/robot/src/ailab
-      - $HOME/Projects/AI4HRC/src/D-RMGPT:/home/robot/src/D-RMGPT
+      - /home/lab/Projects/AI4HRC/src/MaCoRoGPT:/home/robot/src/MaCoRoGPT
     devices:
       - /dev/bus/usb:/dev/bus/usb
     working_dir: /home/robot/

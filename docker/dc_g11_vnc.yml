@@ -28,9 +28,7 @@ services:
     depends_on:
       - xserver
     volumes:
-      - ..:/home/robot/src/ailab
-      - /home/lab/Projects/AI4HRC/src/D-RMGPT:/home/robot/src/D-RMGPT
-      - /home/lab/Projects/AI4HRC/src/CoRoGPT:/home/robot/src/CoRoGPT
+      - /home/lab/Projects/AI4HRC/src/MaCoRoGPT:/home/robot/src/MaCoRoGPT
     devices:
       - /dev/snd:/dev/snd
       #- /dev/bus/usb/002/016:/dev/bus/usb/002/016
